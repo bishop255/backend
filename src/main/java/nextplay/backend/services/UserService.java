@@ -1,10 +1,12 @@
 package nextplay.backend.services;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import nextplay.backend.models.User;
 import nextplay.backend.repositories.UserRepository;
 
+@Service
 public class UserService {
     
     private final UserRepository repository;
