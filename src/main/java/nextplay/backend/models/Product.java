@@ -16,7 +16,7 @@ public class Product {
 
     private String name;
     private String description;
-    private Long price; // 👈 CAMBIAR de Integer a Long
+    private Long price; 
     private String image;
 
     public Product() {}
