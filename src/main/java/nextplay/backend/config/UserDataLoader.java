@@ -1,8 +1,8 @@
 package nextplay.backend.config;
 
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
 import nextplay.backend.models.User;
 import nextplay.backend.repositories.UserRepository;
@@ -25,9 +25,16 @@ public void run(String... args) {
     userRepository.findByEmail("admin@nextplay.cl")
         .orElseGet(() -> {
             User admin = new User();
-            admin.setEmail("admin@nextplay.cl");                  // 👈 sin 'email:'
-            admin.setPassword(passwordEncoder.encode("1234"));    // 👈 sin 'rawPassword:'
-            admin.setRole("ADMIN");                               // 👈 sin 'role:'
+            admin.setEmail("admin@nextplay.cl");
+            admin.setPassword(passwordEncoder.encode("1234"));
+            admin.setRole("ADMIN");
+
+            
+            admin.setAddress("Admin Street 123");
+            admin.setCity("Santiago");
+            admin.setGender("Otros");      
+            admin.setTerms(true);         
+
             return userRepository.save(admin);
         });
 }

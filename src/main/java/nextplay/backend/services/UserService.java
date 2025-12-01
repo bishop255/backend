@@ -26,10 +26,16 @@ public class UserService {
     }
 
     public User login(String email, String password) {
-        User user = repository.findByEmail(email);
-        if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
-            throw new RuntimeException("Credenciales invalidas");
-        }
-        return user;
+
+    User user = repository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("Credenciales inválidas"));
+
+    if (!passwordEncoder.matches(password, user.getPassword())) {
+        throw new RuntimeException("Credenciales inválidas");
     }
+
+    return user;
+}
+
+
  }
