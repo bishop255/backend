@@ -2,6 +2,8 @@ package nextplay.backend.controllers;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,39 +14,46 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import nextplay.backend.models.Product;
+import nextplay.backend.models.dto.ProductRequest;
 import nextplay.backend.services.ProductService;
 
-@CrossOrigin(origins = "*") // Para permitir llamadas desde React
 @RestController
 @RequestMapping("/products")
+@CrossOrigin(origins = "http://localhost:5173")
 public class ProductController {
-    
-    private final ProductService productService;
 
-    public ProductController(ProductService productService) {
-        this.productService = productService;
+    private final ProductService service;
+
+    public ProductController(ProductService service) {
+        this.service = service;
     }
 
     @GetMapping
-    public List<Product> getAllProducts() {
-        return productService.findAll();
+    public ResponseEntity<List<Product>> list() {
+        return ResponseEntity.ok(service.findAll());
     }
 
-    @GetMapping("/id")
-    public Product getProductById(@PathVariable Long id) {
-        return productService.findById(id);
+    @GetMapping("/{id}")
+    public ResponseEntity<Product> getOne(@PathVariable Long id) {
+        Product product = service.findByIdOrThrow(id);
+        return ResponseEntity.ok(product);
     }
-    
+
     @PostMapping
-    public Product createProduct(@RequestBody Product product) {
-        return productService.save(product);
+    public ResponseEntity<Product> create(@RequestBody ProductRequest request) {
+        Product p = new Product();
+        p.setName(request.getName());
+        p.setDescription(request.getDescription());
+        p.setPrice(request.getPrice());
+        p.setImage(request.getImage());
+
+        Product saved = service.save(p);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
-    @DeleteMapping("/id")
-    public void deleteProduct(@PathVariable Long id) {
-        productService.delete(id);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.delete(id); // lanza EntityNotFoundException si no existe
+        return ResponseEntity.noContent().build();
     }
-
-
-
 }

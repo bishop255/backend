@@ -1,5 +1,7 @@
 package nextplay.backend.controllers;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -9,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import nextplay.backend.models.User;
 import nextplay.backend.services.UserService;
 
-@CrossOrigin(origins = "*") // Para permitir llamadas desde React
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -21,13 +23,28 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public User register (@RequestBody User user) {
-        return userService.register(user);
+    public ResponseEntity<?> register(@RequestBody User user) {
+        try {
+            User newUser = userService.register(user);
+            return ResponseEntity.ok(newUser);
+
+        } catch (RuntimeException e) {
+            return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(e.getMessage());
+        }
     }
-    
 
     @PostMapping("/login")
-    public User login (@RequestBody User user) {
-        return userService.login(user.getEmail(), user.getPassword());
+    public ResponseEntity<?> login(@RequestBody User user) {
+        try {
+            User logged = userService.login(user.getEmail(), user.getPassword());
+            return ResponseEntity.ok(logged);
+
+        } catch (RuntimeException e) {
+            return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(e.getMessage());
+        }
     }
 }

@@ -20,17 +20,20 @@ public class User {
     private String city;
     private String gender;
 
-    private boolean terms;
+    private Boolean terms;
+
+    private String role;
 
     public User() {}
 
-    public User(String email, String password, String address, String city, String gender, boolean terms) {
+    public User(String email, String password, String address, String city, String gender, Boolean terms) {
         this.email = email;
         this.password = password;
         this.address = address;
         this.city = city;
         this.gender = gender;
         this.terms = terms;
+        
     }
 
     public Long getId() {
@@ -85,8 +88,16 @@ public class User {
         return terms;
     }
 
-    public void setTerms(boolean terms) {
+    public void setTerms(Boolean terms) {
         this.terms = terms;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
     
     

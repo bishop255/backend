@@ -3,32 +3,42 @@ package nextplay.backend.services;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.persistence.EntityNotFoundException;
 import nextplay.backend.models.Product;
 import nextplay.backend.repositories.ProductRepository;
 
 @Service
 public class ProductService {
 
-    private final ProductRepository repo;
+    private final ProductRepository repository;
 
-    public ProductService(ProductRepository repo) {
-        this.repo = repo;
+    public ProductService(ProductRepository repository) {
+        this.repository = repository;
     }
 
+    @Transactional(readOnly = true)
     public List<Product> findAll() {
-        return repo.findAll();
+        return repository.findAll();
     }
 
-    public Product findById(Long id) {
-        return repo.findById(id).orElse(null);
+    @Transactional(readOnly = true)
+    public Product findByIdOrThrow(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado con id " + id));
     }
 
+    @Transactional
     public Product save(Product product) {
-        return repo.save(product);
+        return repository.save(product);
     }
 
+    @Transactional
     public void delete(Long id) {
-        repo.deleteById(id);
+        if (!repository.existsById(id)) { // usa CrudRepository.existsById
+            throw new EntityNotFoundException("Producto no encontrado con id " + id);
+        }
+        repository.deleteById(id);
     }
 }
